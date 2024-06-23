@@ -160,6 +160,7 @@ class BaseRetriever:
         return checklist[0:knn_num]
     
     def perplexity(self, text, model, tokenizer, device, max_length = 500, stride = 512):
+        #https://huggingface.co/docs/transformers/perplexity
         tokenizer.pad_token = tokenizer.eos_token
         encodings = tokenizer(text, padding=True, return_tensors='pt', truncation=True, max_length=500)
         seq_len = encodings.input_ids.size(1)   
@@ -213,6 +214,11 @@ class BaseRetriever:
 
     ####Demonstration Reorder########
     def fast_map_dpp(self, kernel_matrix, max_length):
+        """
+        fast implementation of the greedy algorithm
+        reference: https://github.com/laming-chen/fast-map-dpp/blob/master/dpp_test.py
+        paper: Fast Greedy MAP Inference for Determinantal Point Process to Improve Recommendation Diversity
+        """
         item_size = kernel_matrix.shape[0]
         cis = np.zeros((max_length, item_size))
         di2s = np.copy(np.diag(kernel_matrix))

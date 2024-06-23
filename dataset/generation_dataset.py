@@ -19,11 +19,11 @@ class GenerationTasksDatasets:
             clean_ds, noise_ds = train_test_split(raw_train_dataset, test_size=noise_ratio, shuffle=True, random_state=self.seed)
             if noise_type == 'relevant':
                 self.text_total = sum([clean_ds['text'].tolist(), noise_ds['text'].tolist()], [])
-                self.label_total = sum([clean_ds['correct'].tolist(), noise_ds['relevant'].tolist()], [])
+                self.label_total = sum([clean_ds['correct'].tolist(), noise_ds['incorrect_w'].tolist()], [])
 
             elif noise_type == 'irrelevant':
                 self.text_total = sum([clean_ds['text'].tolist(), noise_ds['text'].tolist()], [])
-                self.label_total = sum([clean_ds['correct'].tolist(), noise_ds['irrelevant'].tolist()], [])
+                self.label_total = sum([clean_ds['correct'].tolist(), noise_ds['incorrect_wo'].tolist()], [])
 
 
             elif noise_type == 'real':

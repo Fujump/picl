@@ -116,6 +116,11 @@ def get_prompt_label(task):
         labels = []
         template_dict = {0:'</E> \n Question: </text> \n Output: </answer>'}
 
+    elif task == 'nq':
+        template = '</E> \n Question: </text> \n Output: </answer>'
+        labels = []
+        template_dict = {0:'</E> \n Question: </text> \n Output: </answer>'}
+
 
     else:
         print('ERROR PROMPT')

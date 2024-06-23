@@ -10,10 +10,10 @@ pretrained_model_dic = {
 
 def get_model(pretrained_model_name):
     if pretrained_model_name in pretrained_model_dic:
-        model = AutoModelForCausalLM.from_pretrained(pretrained_model_dic[pretrained_model_name],torch_dtype='auto')
+        model = AutoModelForCausalLM.from_pretrained(pretrained_model_dic[pretrained_model_name],torch_dtype='auto', device_map="auto")
         print(pretrained_model_dic[pretrained_model_name])
     else:
-        print("Error: Model Type")
+        print("Error Model Type")
         
     return model
 
