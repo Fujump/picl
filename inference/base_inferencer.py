@@ -1,12 +1,9 @@
 """Basic Inferencer"""
 
-import os
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, PretrainedConfig, GPT2Tokenizer, AutoConfig, \
-    T5ForConditionalGeneration
+
+from transformers import AutoTokenizer, AutoModelForCausalLM, PretrainedConfig, GPT2Tokenizer, AutoConfig
 from typing import List, Union, Optional, Any
 from accelerate import Accelerator
-from accelerate import init_empty_weights, infer_auto_device_map
 
 from common import PromptTemplate
 from common.api import *
