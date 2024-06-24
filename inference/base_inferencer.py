@@ -20,6 +20,7 @@ class BaseInferencer:
     def __init__(self,
                  model_name: Optional[Union[str, Any]] = 'gpt2-xl',
                  tokenizer_name: Optional[Union[str, Any]] = None,
+                 device =None,
                  max_model_token_num: Optional[int] = None,
                  model_config: Optional[PretrainedConfig] = None,
                  batch_size: Optional[int] = 1,
@@ -35,7 +36,7 @@ class BaseInferencer:
         self.accelerator = accelerator
         self.is_main_process = True if self.accelerator is None or self.accelerator.is_main_process else False
         self.api_name = api_name
-
+        
         if 'no_split_module_classes' not in kwargs.keys():
             kwargs['no_split_module_classes'] = []
         if 'device_map' not in kwargs.keys():
@@ -51,9 +52,7 @@ class BaseInferencer:
             if self.api_name == 'opt-175b':
                 self.__init_tokenizer(self.tokenizer_name)
         
-        self.device = "cuda" 
-        if self.model is not None:
-            self.model.to(self.device)
+        self.device = device
         self.model.eval()  
         self.max_model_token_num = max_model_token_num
         self.batch_size = batch_size
@@ -68,50 +67,11 @@ class BaseInferencer:
         raise NotImplementedError("Method hasn't been implemented yet")
 
     def __init_model(self, model_name, model_config, model_parallel, device_map, no_split_module_classes):
-        if not isinstance(model_name, str):
-            self.model = model_name
-            self.model_name = ''  # set model name to null since we pass the loaded model already
-            return
-        if not model_parallel:
-            if model_config is not None:
-                self.model = self.__get_hf_model_from_config(model_name, model_config)
-            else:
-                self.model = self.__get_hf_model_from_name(model_name)
-        else:
-            if model_config is None:
-                model_config = AutoConfig.from_pretrained(model_name)
-            with init_empty_weights():
-                empty_model = AutoModelForCausalLM.from_config(model_config)
-
-            if device_map is None:
-                device_map = infer_auto_device_map(empty_model, no_split_module_classes=no_split_module_classes,
-                                                   dtype="float16")
-
-            self.model = AutoModelForCausalLM.from_pretrained(model_name, device_map=device_map,
-                                                              offload_folder="offload", offload_state_dict=True,
-                                                              torch_dtype=torch.float16)
-
-    def __get_hf_model_from_name(self, model_name):
-        if 't5' in model_name:
-            return T5ForConditionalGeneration.from_pretrained(model_name)
-        else:
-            return AutoModelForCausalLM.from_pretrained(model_name)
-
-    def __get_hf_model_from_config(self, model_name, model_config):
-        if 't5' in model_name:
-            raise TypeError("T5 model has no 'from_config' method")
-        else:
-            return AutoModelForCausalLM.from_config(model_config)
+        self.model = model_name
 
     def __init_tokenizer(self, tokenizer_name):
-        if not isinstance(tokenizer_name, str):
-            self.tokenizer = tokenizer_name
-            return 
-        else:
-            self.tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name, padding=True, return_tensors='pt', truncation=True, max_length=1024)
-            self.tokenizer.pad_token = self.tokenizer.eos_token
-            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
-            self.tokenizer.padding_side = "left"
+        self.tokenizer = tokenizer_name
+    
 
 
     def get_input_token_num(self, inputs):

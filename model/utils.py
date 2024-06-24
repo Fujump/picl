@@ -12,7 +12,7 @@ pretrained_model_dic = {
 
 def get_model(pretrained_model_name):
     if pretrained_model_name in pretrained_model_dic:
-        model = AutoModelForCausalLM.from_pretrained(pretrained_model_dic[pretrained_model_name])
+        model = AutoModelForCausalLM.from_pretrained(pretrained_model_dic[pretrained_model_name], device_map="auto")
     else:
         print("Error: Model Type")
         

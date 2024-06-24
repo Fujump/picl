@@ -12,24 +12,10 @@ from .base_inferencer import BaseInferencer, PPLInferencerOutputHandler
 logger = get_logger(__name__)
 
 class PPLInferencer(BaseInferencer):
-    """PPL In-context Learning Inferencer Class
-        Perplexity-based In-context Learning Inferencer.
-        
-    Attributes:
-        model (:obj:`AutoModelForCausalLM`, optional): Local PLM (loaded from Hugging Face), which can be initialized by name or a config class. 
-        tokenizer (:obj:`AutoTokenizer` or :obj:`GPT2Tokenizer`, optional): Tokenizer for :obj:`model`.
-        max_model_token_num (:obj:`int`, optional): Maximum number of tokenized words allowed by the LM. 
-        batch_size (:obj:`int`, optional): Batch size for the :obj:`DataLoader`. 
-        accelerator (:obj:`Accelerator`, optional): An instance of the `Accelerator` class, used for multiprocessing.
-        output_json_filepath (:obj:`str`, optional): File path for output `JSON` file. 
-        output_json_filename (:obj:`str`, optional): File name for output `JSON` file. 
-        api_name (:obj:`str`, optional): Name of API service. 
-        call_api (:obj:`bool`): If ``True``, an API for LM models will be used, determined by :obj:`api_name`.   
-        labels (:obj:`List`, optional): A list of labels for all classes.
-    """
     def __init__(self,
                  model_name: Optional[str] = 'gpt2-xl',
                  tokenizer_name: Optional[str] = None,
+                 device =None,
                  max_model_token_num: Optional[int] = None,
                  model_config: Optional[PretrainedConfig] = None,
                  batch_size: Optional[int] = 1,
@@ -40,7 +26,7 @@ class PPLInferencer(BaseInferencer):
                  model_parallel: Optional[bool] = False,
                  **kwargs
                  ) -> None:
-        super().__init__(model_name, tokenizer_name, max_model_token_num, model_config, batch_size, accelerator,
+        super().__init__(model_name, tokenizer_name,device, max_model_token_num, model_config, batch_size, accelerator,
                          output_json_filepath, output_json_filename, api_name, model_parallel, **kwargs)
 
 

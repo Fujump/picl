@@ -16,8 +16,7 @@ def main(args):
 
     setup_seed(100)
     device = torch.device("cuda:0")
-    model, tokenizer = get_model(args.pretrained_model_name).to(device), get_tokenizer(args.pretrained_model_name)
-    model.eval()
+    model, tokenizer = get_model(args.pretrained_model_name), get_tokenizer(args.pretrained_model_name)
     
     acc = []
     for seed in [100]:
@@ -39,12 +38,8 @@ def main(args):
         ice = get_input(args.task, ice_idx_list, template, template_dict, ice_dataset)
 
         #####Inference#####
-        # inferencer = get_inferencer('ppl', model=model, tokenizer = tokenizer, device=device, batch_size=args.batch_size)
-        # test_predictions = inferencer.inference(task=args.task, ice=ice,  testdata=test_dataset['text'])
-        
-        inferencer = get_inferencer('ppl', model_name=model, tokenizer_name = tokenizer, batch_size=args.batch_size)
+        inferencer = get_inferencer('ppl', model_name=model, tokenizer_name = tokenizer, device = device, batch_size=args.batch_size)
         test_predictions = inferencer.inference(task=args.task, ice=ice,  candidate=test_dataset['text'], labels=list(range(len(label))), ice_template=template_dict)
-
 
         #####Evaluate#####
         acc_evaluate = evaluate.load('/data/home/hongfugao/evaluate/metrics/accuracy')
