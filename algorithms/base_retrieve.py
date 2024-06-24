@@ -33,7 +33,7 @@ class BaseRetriever:
         self.template, self.template_dict, self.label = get_prompt_label(self.task)
         self.device = device
         
-        self.tokenizer_name = 'google-bert/bert-base-cased'
+        self.tokenizer_name = '/mnt/sharedata/ssd/users/hongfugao/model/bert-base-cased'
         self.tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
         self.model = SentenceTransformer(self.tokenizer_name)
         self.model = self.model.to(self.device)
@@ -214,11 +214,6 @@ class BaseRetriever:
 
     ####Demonstration Reorder########
     def fast_map_dpp(self, kernel_matrix, max_length):
-        """
-        fast implementation of the greedy algorithm
-        reference: https://github.com/laming-chen/fast-map-dpp/blob/master/dpp_test.py
-        paper: Fast Greedy MAP Inference for Determinantal Point Process to Improve Recommendation Diversity
-        """
         item_size = kernel_matrix.shape[0]
         cis = np.zeros((max_length, item_size))
         di2s = np.copy(np.diag(kernel_matrix))

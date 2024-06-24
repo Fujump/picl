@@ -1,19 +1,20 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from accelerate import Accelerator
+from accelerate.utils import gather_object
+
+accelerator = Accelerator()
+
 
 pretrained_model_dic = {
-        "llama":"meta-llama/Llama-2-7b-chat-hf",
-        "mistral":"mistralai/Mistral-7B-Instruct-v0.2",
-        "llama13":"meta-llama/Llama-2-13b-chat-hf",
-        'opt':"facebook/opt-6.7b",
+        "llama":"/mnt/sharedata/ssd/common/LLMs/Meta-Llama-3-8B",
         }
 
 
 def get_model(pretrained_model_name):
     if pretrained_model_name in pretrained_model_dic:
-        model = AutoModelForCausalLM.from_pretrained(pretrained_model_dic[pretrained_model_name],torch_dtype='auto', device_map="auto")
-        print(pretrained_model_dic[pretrained_model_name])
+        model = AutoModelForCausalLM.from_pretrained(pretrained_model_dic[pretrained_model_name])
     else:
-        print("Error Model Type")
+        print("Error: Model Type")
         
     return model
 
