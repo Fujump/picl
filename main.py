@@ -1,6 +1,6 @@
 
 import os 
-os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 import pandas as pd
 
 import torch
@@ -54,11 +54,11 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
     #task and prompt
-    parser.add_argument('--task', type=str, choices=['nq','sciq'], default='nq', help='task.')
+    parser.add_argument('--task', type=str, choices=['nq','sciq','illegal'], default='illegal', help='task.')
     
     #retriever
     parser.add_argument('--test_retrieving', type=str, choices=['random', 'topk', 'dpp', 'zero'], default='topk', help='Choose demonstration selection method.')
-    parser.add_argument('--noise_retrieving', type=bool, choices=[True, False], default=True, help='Choose noise retriever.')
+    parser.add_argument('--noise_retrieving', type=bool, choices=[True, False], default=False, help='Choose noise retriever.')
     parser.add_argument('--dpp_candidate_num',  type=int, default=16, help='see DPP.')
     parser.add_argument('--ice_num',  type=int, default=4)
 
