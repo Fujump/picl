@@ -4,10 +4,9 @@ import random
 import numpy as np
 import pandas as pd
 
+from tqdm import tqdm
+from datasets import load_dataset
 from sklearn.model_selection import train_test_split
-
-from common import get_noise_label
-
 
 
 def setup_seed(seed):
@@ -41,10 +40,10 @@ class ClassificationTasksDatasets:
         
         elif self.task == 'illegal':
             raw_dataset = pd.DataFrame(columns=["label_sub", "label_total", "text"])
-            raw_dataset = pd.read_json("all_data.json", orient='columns', lines=True)
+            raw_dataset = pd.read_json("dataset/all_data.json", orient='columns', lines=True)
         elif self.task == 'illegal_debug':
             raw_dataset = pd.DataFrame(columns=["text","label_total"])
-            raw_dataset = pd.read_json("data_debug.json", orient='columns', lines=True)
+            raw_dataset = pd.read_json("dataset/data_debug.json", orient='columns', lines=True)
         elif self.task == 'cold':
             pass
         else:
@@ -53,6 +52,7 @@ class ClassificationTasksDatasets:
         
         if self.task!='cold':
             train_ds, test_ds = train_test_split(raw_dataset, test_size=self.train_test_split_ratio, shuffle=True, random_state=100)
+            print(f"test size:{len(test_ds)}")
 
         if self.dataset_type == 'train':
             if self.task == 'illegal' or self.task == 'illegal_debug':
@@ -78,9 +78,12 @@ class ClassificationTasksDatasets:
                 self.text = test_ds['text'].tolist()
                 self.raw_label = pd.Series(test_ds['label'].tolist())
         
-        classes_num = self.get_classes_num()
-        self.label = get_noise_label(self.noise_type, self.raw_label, self.noise_ratio, random_state=seed, classes=classes_num).tolist()
+        # classes_num = self.get_classes_num()
+        self.label = self.raw_label
 
+
+            
+        
 
     def __getitem__(self, index):
         text, target = self.text[index], self.label[index]
@@ -90,6 +93,37 @@ class ClassificationTasksDatasets:
     def __len__(self):
         return len(self.text)
     
-    def get_classes_num(self):
-        return len(list(set(self.raw_label)))
 
+    def get_img_num_per_cls(self, data, cls_num, imb_type, imb_factor):
+        img_max = len(data) / cls_num
+        img_num_per_cls = []
+        if imb_type == 'exp':
+            for cls_idx in range(cls_num):
+                num = img_max * (imb_factor ** (cls_idx / (cls_num - 1.0)))
+                img_num_per_cls.append(int(num))
+        elif imb_type == 'step':
+            for cls_idx in range(cls_num // 2):
+                img_num_per_cls.append(int(img_max))
+            for cls_idx in range(cls_num // 2):
+                img_num_per_cls.append(int(img_max * imb_factor))
+        else:
+            img_num_per_cls.extend([int(img_max)] * cls_num)
+        return img_num_per_cls
+    
+
+    def gen_imbalanced_data(self, text, label, img_num_per_cls):
+        new_data = []
+        new_targets = []
+        targets_np = np.array(label, dtype=np.int64)
+        classes = np.unique(targets_np)
+        # np.random.shuffle(classes)
+        self.num_per_cls_dict = dict()
+        for the_class, the_img_num in zip(classes, img_num_per_cls):
+            self.num_per_cls_dict[the_class] = the_img_num
+            idx = np.where(targets_np == the_class)[0]
+            np.random.shuffle(idx)
+            selec_idx = idx[:the_img_num]
+            new_data.append([text[idx] for idx in selec_idx])
+            new_targets.extend([the_class, ] * the_img_num)
+
+        return sum(new_data,[]), new_targets

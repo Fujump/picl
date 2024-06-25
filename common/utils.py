@@ -52,7 +52,7 @@ def setup_seed(seed):
 
 
 def get_inputes(task, new_ice_idx, new_ice_target, template, template_dict, training_dataset):
-    if (task == 'sst5' or task == 'ag_news' or task == 'sst2'):
+    if (task == 'agnews' or task == 'sst2' or task == 'sst5' or task == 'dbpedia'):
         generated_ice_list = []
         for idx_list in range(len(new_ice_idx)):
 
@@ -72,7 +72,7 @@ def get_inputes(task, new_ice_idx, new_ice_target, template, template_dict, trai
     return generated_ice_list
 
 
-def collote_fn(batch_samples, tokenizer=AutoTokenizer.from_pretrained("google-bert/bert-base-cased", trust_remote_code=True)):
+def collote_fn(batch_samples, tokenizer=AutoTokenizer.from_pretrained("/mnt/sharedata/ssd/users/hongfugao/model/bert-base-cased", trust_remote_code=True)):
     batch_sentence = []
     batch_label = []
     for text, target, index in batch_samples:
@@ -90,9 +90,16 @@ def collote_fn(batch_samples, tokenizer=AutoTokenizer.from_pretrained("google-be
     return X, y
 
 
-
 def get_prompt_label(task):
-    if task == 'sst2':
+    if task == 'illegal' or task == 'illegal_debug':
+        template = '\n </text> '
+        labels = ["不违规", "违规"]
+        template_dict = {
+                        1: " </E> \n </text> 违规",
+                        0: " </E> \n </text> 不违规" 
+                    }
+
+    elif task == 'sst2':
         template = '\n Positve or Negative New Review? \n Input: </text> \n Output:'
         labels = ["Negative", "Positve"]
         template_dict = {
@@ -100,8 +107,18 @@ def get_prompt_label(task):
                         0: " </E> \n Positve or Negative New Review? \n Input: </text> \n Output: Negative" 
                     }
         
-        
-    elif task == 'ag_news':
+    elif task == 'sst5':
+        template = '\n Very Positve, Positve, Neutral, Negative or Very Negative Movie Review? \n Input: </text> \n Output:'
+        labels = ["Very Negative","Negative", "Neutral", "Positve", "Very Positve"]
+        template_dict = {
+                0: "</E> \n Very Positve, Positve, Neutral, Negative or Very Negative Movie Review? \n Input: </text> \n Output: Very Negative",
+                1: "</E> \n Very Positve, Positve, Neutral, Negative or Very Negative Movie Review? \n Input: </text> \n Output: Negative",
+                2: "</E> \n Very Positve, Positve, Neutral, Negative or Very Negative Movie Review? \n Input: </text> \n Output: Neutral",
+                3: "</E> \n Very Positve, Positve, Neutral, Negative or Very Negative Movie Review? \n Input: </text> \n Output: Positve",
+                4: "</E> \n Very Positve, Positve, Neutral, Negative or Very Negative Movie Review? \n Input: </text> \n Output: Very Positve"
+            }
+
+    elif task == 'agnews':
         template = '\n World, Sports, Business or Science New Topic? \n Input: </text> \n Output:'
         labels = ["World", "Sports", "Business", "Science"]
         template_dict = {
@@ -110,17 +127,31 @@ def get_prompt_label(task):
                 2: "</E> \n World, Sports, Business or Science New Topic? \n Input: </text> \n Output: Business",
                 3: "</E> \n World, Sports, Business or Science New Topic? \n Input: </text> \n Output: Science"
             }
+        
+    elif task == 'dbpedia':
+        template = '\n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output:'
+        labels = ["Company", "Educational Institution", "Artist", "Athlete", "Office Holder", "Mean Of Transportation", "Building", "Natural Place", "Village", "Animal", "Plant", "Album", "Film", "Written Work"]
+        template_dict = {
+                0: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Company",
+                1: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Educational Institution",
+                2: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Artist",
+                3: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Athlete",
+                4: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Office Holder",
+                5: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Mean Of Transportation",
+                6: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Building",
+                7: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Natural Place",
+                8: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Village",
+                9: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Animal",
+                10: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Plant",
+                11: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Album",
+                12: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Film",
+                13: "</E> \n Company, Educational Institution, Artist, Athlete, Office Holder, Mean Of Transportation, Building, Natural Place, Village, Animal, Plant, Album, Film or Written Work Topic? \n Input: </text> \n Output: Written Work",
+                }
 
     elif task == 'nq':
         template = '</E> \n Question: </text> \n Output: </answer>'
         labels = []
         template_dict = {0:'</E> \n Question: </text> \n Output: </answer>'}
-
-    elif task == 'nq':
-        template = '</E> \n Question: </text> \n Output: </answer>'
-        labels = []
-        template_dict = {0:'</E> \n Question: </text> \n Output: </answer>'}
-
 
     else:
         print('ERROR PROMPT')
@@ -132,14 +163,14 @@ def extract_data(dataloader, task):
     texts = []
     labels = []
     ppls = []
-    if (task == 'sst2' or task == 'ag_news'):
+    if (task == 'sst2' or task == 'agnews' or task == 'sst5' or task == 'dbpedia'):
         for text, target, index in tqdm (dataloader):
             texts.append(text[0])
             labels.append(int(target[0]))
     else:
         for text, target, index in tqdm (dataloader):
             texts.append(text[0])
-            labels.append(target[0])
+            labels.append(0 if target[0]=="不违规" else 1)
 
     data = pd.DataFrame({"text": texts, "label": labels})
     return data
@@ -150,7 +181,7 @@ def generate_label_prompt(idx, test_ds, ice, label, template):
     return prompt
 
 def get_input(task, ice_idx_list, template, template_dict, training_dataset):
-    if (task == 'sst2' or task == 'ag_news'):
+    if (task == 'sst2' or task == 'agnews' or task == 'sst5' or task == 'dbpedia'):
         generated_ice_list = []
         for idx_list in ice_idx_list:
 
@@ -181,3 +212,23 @@ from torch.utils.data import DataLoader
 def get_dataloader(datalist: List[List], batch_size: int) -> DataLoader:
     dataloader = DataLoader(datalist, batch_size=batch_size)
     return dataloader
+
+def calculate_precision_recall(preds, labels):
+    TP = sum((pred == 1) and (label == 1) for pred, label in zip(preds, labels))
+    FP = sum((pred == 1) and (label == 0) for pred, label in zip(preds, labels))
+    FN = sum((pred == 0) and (label == 1) for pred, label in zip(preds, labels))
+
+    precision = TP / (TP + FP) if TP + FP != 0 else 0
+    recall = TP / (TP + FN) if TP + FN != 0 else 0
+
+    return precision, recall
+
+def calculate_precision_recall_neg(preds, labels):
+    TP = sum((pred == 0) and (label == 0) for pred, label in zip(preds, labels))
+    FP = sum((pred == 0) and (label == 1) for pred, label in zip(preds, labels))
+    FN = sum((pred == 1) and (label == 0) for pred, label in zip(preds, labels))
+
+    precision = TP / (TP + FP) if TP + FP != 0 else 0
+    recall = TP / (TP + FN) if TP + FN != 0 else 0
+
+    return precision, recall

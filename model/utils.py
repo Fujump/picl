@@ -1,19 +1,54 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from accelerate import Accelerator
+from accelerate.utils import gather_object
+
+accelerator = Accelerator()
+
 
 pretrained_model_dic = {
-        "llama":"meta-llama/Llama-2-7b-chat-hf",
-        "mistral":"mistralai/Mistral-7B-Instruct-v0.2",
-        "llama13":"meta-llama/Llama-2-13b-chat-hf",
-        'opt':"facebook/opt-6.7b",
+        "gpt2":"/mnt/sharedata/ssd/users/hongfugao/model/Llama-2-7b-chat-hf",
+        "bert":"/mnt/sharedata/ssd/users/huq/model/bert-base-chinese",
+        "baichuan2":"/mnt/sharedata/ssd/users/huq/model/Baichuan2-7B-Chat",
+        "qwen1.5":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-7B-Chat",
+        "baichuan2_ft":"/mnt/sharedata/ssd/users/huq/model/Baichuan2-7B-Chat-ft-firefly-merged",
+        "qwen1.5_ft":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-7B-Chat-ft-firefly-merged",
+        "baichuan2_warmup":"/mnt/sharedata/ssd/users/huq/model/warmup_baichuan2/checkpoint-final-merged",
+        "qwen1.5_warmup":"/mnt/sharedata/ssd/users/huq/model/warmup_qwen1.5/checkpoint-final-merged",
+        "qwen1.5-14b":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat",
+        "qwen1.5-14b-ft":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft",
+        "baichuan2_warmup_topk":"/mnt/sharedata/ssd/users/huq/model/baichuan2-warmup-topk/checkpoint-final-merged",
+        "qwen1.5_warmup_topk":"/mnt/sharedata/ssd/users/huq/model/qwen1.5-warmup-topk/checkpoint-final-merged",
+        "tinyllama":"/mnt/sharedata/ssd/users/huq/model/TinyLlama-1.1B-Chat-v1.0",
+        "llama3":"/mnt/sharedata/ssd/users/huq/model/Llama3-ChatQA-1.5-8B",
+        "llama3-c":"/mnt/sharedata/ssd/users/huq/model/Llama3-Chinese_v2",
+        "chatglm3":"/mnt/sharedata/ssd/users/huq/model/chatglm3-6b",
+        "internlm2-chat-7b":"/mnt/sharedata/ssd/users/huq/model/internlm2-chat-7b",
+        "Yi-1.5-9B-Chat":"/mnt/sharedata/ssd/users/huq/model/Yi-1.5-9B-Chat",
+        "Mistral-7B":"/mnt/sharedata/ssd/common/LLMs/Mistral-7B-Instruct-v0.3",
+        "Mistral-22B":"/mnt/sharedata/ssd/common/LLMs/Mixtral-8x22B-Instruct-v0.1",
+        "gemma-1.1-7b":"/mnt/sharedata/ssd/common/LLMs/gemma-1.1-7b-it",
+        "GPT-J-6B":"/mnt/sharedata/ssd/common/LLMs/GPT-J-6B",
+        "opt-6.7b":"/mnt/sharedata/ssd/common/LLMs/opt-6.7b",
+        "opt-13b":"/mnt/sharedata/ssd/common/LLMs/opt-13b",
+        "opt-30b":"/mnt/sharedata/ssd/common/LLMs/opt-30b",
+        "opt-66b":"/mnt/sharedata/ssd/common/LLMs/opt-66b",
+        "Qwen2-7B":"/mnt/sharedata/ssd/common/LLMs/Qwen2-7B",
+        "Qwen2-72B":"/mnt/sharedata/ssd/common/LLMs/Qwen2-72B",
+        "glm-4-9b-chat":"/mnt/sharedata/ssd/common/LLMs/glm-4-9b-chat",
+        "YI-1.5-9B":"/mnt/sharedata/ssd/common/LLMs/YI-1.5-9B",
+        "YI-1.5-34B":"/mnt/sharedata/ssd/common/LLMs/YI-1.5-34B",
+        "Ziya2-13B-Chat":"/mnt/sharedata/ssd/common/LLMs/Ziya2-13B-Chat",
+        "deepseek-llm-7b-chat":"/mnt/sharedata/ssd/common/LLMs/deepseek-llm-7b-chat",
+        "deepseek-llm-67b-chat":"/mnt/sharedata/ssd/common/LLMs/deepseek-llm-67b-chat",
+        
         }
 
 
 def get_model(pretrained_model_name):
     if pretrained_model_name in pretrained_model_dic:
-        model = AutoModelForCausalLM.from_pretrained(pretrained_model_dic[pretrained_model_name],torch_dtype='auto', device_map="auto")
-        print(pretrained_model_dic[pretrained_model_name])
+        model = AutoModelForCausalLM.from_pretrained(pretrained_model_dic[pretrained_model_name], device_map="auto", trust_remote_code=True)
     else:
-        print("Error Model Type")
+        print("Error: Model Type")
         
     return model
 
@@ -21,7 +56,7 @@ def get_model(pretrained_model_name):
 def get_tokenizer(pretrained_model_name):
 
     if pretrained_model_name in pretrained_model_dic:
-        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_dic[pretrained_model_name], padding_side='left', padding=True, return_tensors='pt', truncation=True, max_length=2048)
+        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_dic[pretrained_model_name], padding_side='left', padding=True, return_tensors='pt', truncation=True, max_length=2048, trust_remote_code=True)
 
     else:
         print("Error: Tokenizer Type")

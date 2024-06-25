@@ -48,3 +48,8 @@ Thumbs.db
 *.mov
 *.wmv
 
+output/
+log/
+*.csv
+*.json
+*.out
