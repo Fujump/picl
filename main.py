@@ -101,7 +101,7 @@ if __name__ == '__main__':
     parser.add_argument('--pretrained_model_name', '-m', choices=['deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
     
     #others
-    parser.add_argument('--batch_size', type=int, default=8, help='Test batch size.')
+    parser.add_argument('--batch_size', type=int, default=2, help='Test batch size.')
     args = parser.parse_args()
     main(args)
 
