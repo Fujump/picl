@@ -53,3 +53,4 @@ log/
 *.csv
 *.json
 *.out
+*.jsonl
