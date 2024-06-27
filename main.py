@@ -24,7 +24,7 @@ def main(args):
     recalls=[]
     precisions_neg=[]
     recalls_neg=[]
-    for seed in [100,200,300]:
+    for seed in [100]:
         setup_seed(seed)
 
         #####get data#####
@@ -37,10 +37,12 @@ def main(args):
         test_dataset = extract_data(raw_test_dataloader, args.task)
 
 
-        retriever = get_retriever(args.test_retrieving, args.task, raw_ice_dataloader, raw_test_dataloader, model, tokenizer, device)
-        ice_idx_list = retriever.retrieve(args.ice_num, args.dpp_candidate_num, args.noise_retrieving, args.knn_num, args.tau, args.similarity_score, args.ranking)
+        # retriever = get_retriever(args.test_retrieving, args.task, raw_ice_dataloader, raw_test_dataloader, model, tokenizer, device)
+        # ice_idx_list = retriever.retrieve(args.ice_num, args.dpp_candidate_num, args.noise_retrieving, args.knn_num, args.tau, args.similarity_score, args.ranking)
         template, template_dict, label = get_prompt_label(args.task)
-        ice = get_input(args.task, ice_idx_list, template, template_dict, ice_dataset)
+        # ice = get_input(args.task, ice_idx_list, template, template_dict, ice_dataset)
+        ice=['']*len(test_dataset)
+
 
         #####Inference#####
         inferencer = get_inferencer('ppl', model_name=model, tokenizer_name = tokenizer, device = device, batch_size=args.batch_size)
@@ -61,7 +63,7 @@ def main(args):
         accuracys.append(acc)
 
         dat = pd.DataFrame({"preds":test_predictions, "label":test_dataset['label'], "ice":ice, "text":test_dataset['text']})
-        dat.to_csv('/data/home/huq/deepai/output/{model}_{ranking}_{ice_num}_{knn_num}_{task}_{dpp_candidate_num}_{test_retrieving}_{noise_retrieving}_{tau}_{seed}.csv'.format(model=args.pretrained_model_name ,ranking=args.ranking, tau=args.tau, dpp_candidate_num=args.dpp_candidate_num, ice_num=args.ice_num, task=args.task, test_retrieving=args.test_retrieving,  noise_retrieving=args.noise_retrieving, seed=seed,knn_num=args.knn_num))
+        dat.to_csv('/data/home/huq/deepai/output_new/{model}_{ranking}_{ice_num}_{knn_num}_{task}_{dpp_candidate_num}_{test_retrieving}_{noise_retrieving}_{tau}_{seed}.csv'.format(model=args.pretrained_model_name ,ranking=args.ranking, tau=args.tau, dpp_candidate_num=args.dpp_candidate_num, ice_num=args.ice_num, task=args.task, test_retrieving=args.test_retrieving,  noise_retrieving=args.noise_retrieving, seed=seed,knn_num=args.knn_num))
 
     # dat = pd.DataFrame({"acc":acc})
     # dat.to_csv("/data/home/hongfugao/result/{task}_{icl}_{model}_{imbalance_ratio}.csv".format(task=args.task, icl=args.test_retrieving, model=args.pretrained_model_name, imbalance_ratio=args.imbalance_ratio))
@@ -70,7 +72,7 @@ def main(args):
     print(f"accuracy:{accuracys}, precision:{precisions}, recall:{recalls}, precision_n:{precisions_neg}, recall_n:{recalls_neg}")
     # resul = pd.DataFrame({"em": em, "rouge":rouge})
     resul = pd.DataFrame({"accuracy":accuracys, "precision": precisions, "recall":recalls, "precision_n":precisions_neg, "recall_n":recalls_neg})
-    resul.to_csv('/data/home/huq/deepai/output/result_{model}_{ranking}_{ice_num}_{knn_num}_{task}_{dpp_candidate_num}_{test_retrieving}_{noise_retrieving}_{tau}_{seed}.csv'.format(model=args.pretrained_model_name ,ranking=args.ranking, tau=args.tau, dpp_candidate_num=args.dpp_candidate_num, ice_num=args.ice_num, task=args.task, test_retrieving=args.test_retrieving,  noise_retrieving=args.noise_retrieving, seed=seed,knn_num=args.knn_num))
+    resul.to_csv('/data/home/huq/deepai/output_new/result_{model}_{ranking}_{ice_num}_{knn_num}_{task}_{dpp_candidate_num}_{test_retrieving}_{noise_retrieving}_{tau}_{seed}.csv'.format(model=args.pretrained_model_name ,ranking=args.ranking, tau=args.tau, dpp_candidate_num=args.dpp_candidate_num, ice_num=args.ice_num, task=args.task, test_retrieving=args.test_retrieving,  noise_retrieving=args.noise_retrieving, seed=seed,knn_num=args.knn_num))
         
 
 
@@ -98,7 +100,7 @@ if __name__ == '__main__':
     parser.add_argument('--ice_imbalance_type', type=str, choices=['exp', "real"], default="exp", help='noisy type.')
 
     #model
-    parser.add_argument('--pretrained_model_name', '-m', choices=['deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
+    parser.add_argument('--pretrained_model_name', '-m', choices=['Baichuan2-13B-Chat','ShieldLM-13B-baichuan2',"glm-4-9b-chat",'internlm2-20b','internlm2-7b','deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
     
     #others
     parser.add_argument('--batch_size', type=int, default=2, help='Test batch size.')

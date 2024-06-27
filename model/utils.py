@@ -35,12 +35,16 @@ pretrained_model_dic = {
         "Qwen2-7B":"/mnt/sharedata/ssd/common/LLMs/Qwen2-7B",
         "Qwen2-72B":"/mnt/sharedata/ssd/common/LLMs/Qwen2-72B",
         "glm-4-9b-chat":"/mnt/sharedata/ssd/common/LLMs/glm-4-9b-chat",
-        "YI-1.5-9B":"/mnt/sharedata/ssd/common/LLMs/YI-1.5-9B",
-        "YI-1.5-34B":"/mnt/sharedata/ssd/common/LLMs/YI-1.5-34B",
+        "YI-1.5-9B":"/mnt/sharedata/ssd/common/LLMs/Yi-1.5-9B",
+        "YI-1.5-34B":"/mnt/sharedata/ssd/common/LLMs/Yi-1.5-34B",
         "Ziya2-13B-Chat":"/mnt/sharedata/ssd/common/LLMs/Ziya2-13B-Chat",
         "deepseek-llm-7b-chat":"/mnt/sharedata/ssd/common/LLMs/deepseek-llm-7b-chat",
         "deepseek-llm-67b-chat":"/mnt/sharedata/ssd/common/LLMs/deepseek-llm-67b-chat",
-        
+        "ShieldLM-13B-baichuan2":"/mnt/sharedata/ssd/common/LLMs/ShieldLM-13B-baichuan2",
+        "internlm2-7b":"/mnt/sharedata/ssd/common/LLMs/internlm2-7b",
+        "internlm2-20b":"/mnt/sharedata/ssd/common/LLMs/internlm2-20b",
+        "Baichuan2-13B-Chat":"/mnt/sharedata/ssd/common/LLMs/Baichuan2-13B-Chat",
+
         }
 
 

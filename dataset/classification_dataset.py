@@ -40,7 +40,8 @@ class ClassificationTasksDatasets:
         
         elif self.task == 'illegal':
             raw_dataset = pd.DataFrame(columns=["label_sub", "label_total", "text"])
-            raw_dataset = pd.read_json("dataset/all_data.json", orient='columns', lines=True)
+            # raw_dataset = pd.read_json("dataset/all_data.json", orient='columns', lines=True)
+            raw_dataset = pd.read_json("/mnt/sharedata/ssd/users/huq/dataset/illegal.json", orient='columns', lines=True)
         elif self.task == 'illegal_debug':
             raw_dataset = pd.DataFrame(columns=["text","label_total"])
             raw_dataset = pd.read_json("dataset/data_debug.json", orient='columns', lines=True)
@@ -51,7 +52,7 @@ class ClassificationTasksDatasets:
         
         
         if self.task!='cold':
-            train_ds, test_ds = train_test_split(raw_dataset, test_size=self.train_test_split_ratio, shuffle=True, random_state=100)
+            train_ds, test_ds = train_test_split(raw_dataset, test_size=self.train_test_split_ratio, shuffle=True, random_state=seed)
             print(f"test size:{len(test_ds)}")
 
         if self.dataset_type == 'train':
