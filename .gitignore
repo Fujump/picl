@@ -49,7 +49,9 @@ Thumbs.db
 *.wmv
 
 output/
+output_new/
 log/
+log_new/
 *.csv
 *.json
 *.out
