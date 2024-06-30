@@ -56,12 +56,20 @@ class ClassificationTasksDatasets:
                 raw_dat = pd.read_csv("/data/home/hongfugao/test_sst5.csv")
             class_num = 5
 
+        
+        elif self.task == 'anli':
+            if self.dataset_type == 'train':
+                raw_dat = pd.read_csv("/data/home/hongfugao/anli_train.csv")
+            else:
+                raw_dat = pd.read_csv("/data/home/hongfugao/anli_test.csv")
+            class_num = 3
+
         elif self.task == 'dbpedia':
             if self.dataset_type == 'train':
                 raw_dat = pd.read_csv("/data/home/hongfugao/train_dbpedia.csv")
             else:
                 raw_dat = pd.read_csv("/data/home/hongfugao/test_dbpedia.csv")
-            class_num = 5
+            class_num = 14
 
 
         else:

@@ -36,6 +36,7 @@ class GenInferencer(BaseInferencer):
     def __init__(self,
                  model_name: Optional[str] = 'gpt2-xl',
                  tokenizer_name: Optional[str] = None,
+                 device =None,
                  max_model_token_num: Optional[int] = None,
                  model_config: Optional[PretrainedConfig] = None,
                  batch_size: Optional[int] = 1,
@@ -46,7 +47,7 @@ class GenInferencer(BaseInferencer):
                  model_parallel: Optional[bool] = False,
                  **kwargs
                  ) -> None:
-        super().__init__(model_name, tokenizer_name, max_model_token_num, model_config, batch_size, accelerator,
+        super().__init__(model_name, tokenizer_name,device, max_model_token_num, model_config, batch_size, accelerator,
                          output_json_filepath, output_json_filename, api_name, model_parallel, **kwargs)
         self.gen_field_replace_token = ''
         
@@ -61,7 +62,7 @@ class GenInferencer(BaseInferencer):
                   prompt_template: Optional[PromptTemplate] = None, output_json_filepath: Optional[str] = None,
                   output_json_filename: Optional[str] = None, normalizing_str: Optional[str] = None) -> List:
 
-        self.generation_kwargs = {"max_new_tokens": 50}
+        self.generation_kwargs = {"max_new_tokens": 10}
 
         # 1. Preparation for output logs
         index = 0

@@ -9,7 +9,7 @@ from dataset.utils import get_dataloader
 from model import get_model, get_tokenizer
 from algorithms import get_retriever
 from inference import get_inferencer
-from common import get_prompt_label, extract_data, setup_seed, get_input
+from common import get_prompt_label, extract_data, setup_seed, get_input, delect_unavailable_word
 
 
 def main(args):
@@ -32,19 +32,22 @@ def main(args):
         test_dataset = extract_data(raw_test_dataloader, args.task)
 
 
-        retriever = get_retriever(args.test_retrieving, args.task, raw_ice_dataloader, raw_test_dataloader, model, tokenizer, device)
-        ice_idx_list = retriever.retrieve(args.ice_num, args.dpp_candidate_num, args.noise_retrieving, args.knn_num, args.tau, args.similarity_score, args.ranking)
+        # retriever = get_retriever(args.test_retrieving, args.task, raw_ice_dataloader, raw_test_dataloader, model, tokenizer, device)
+        # ice_idx_list = retriever.retrieve(args.ice_num, args.dpp_candidate_num, args.noise_retrieving, args.knn_num, args.tau, args.similarity_score, args.ranking)
         template, template_dict, label = get_prompt_label(args.task)
-        ice = get_input(args.task, ice_idx_list, template, template_dict, ice_dataset)
+        # ice = get_input(args.task, ice_idx_list, template, template_dict, ice_dataset)
+        ice = ['']*len(test_dataset)
 
         #####Inference#####
-        inferencer = get_inferencer('ppl', model_name=model, tokenizer_name = tokenizer, device = device, batch_size=args.batch_size)
+        inferencer = get_inferencer('gen', model_name=model, tokenizer_name = tokenizer, device = device, batch_size=args.batch_size)
         test_predictions = inferencer.inference(task=args.task, ice=ice,  candidate=test_dataset['text'], labels=list(range(len(label))), ice_template=template_dict)
+        
+        print(delect_unavailable_word(test_predictions))
 
-        #####Evaluate#####
-        acc_evaluate = evaluate.load('/data/home/hongfugao/evaluate/metrics/accuracy')
-        acc.append(acc_evaluate.compute(predictions=test_predictions, references=test_dataset['label']))
-    print(acc)
+    #     #####Evaluate#####
+    #     acc_evaluate = evaluate.load('/data/home/hongfugao/evaluate/metrics/accuracy')
+    #     acc.append(acc_evaluate.compute(predictions=test_predictions, references=test_dataset['label']))
+    # print(acc)
 
     # dat = pd.DataFrame({"acc":acc})
     # dat.to_csv("/data/home/hongfugao/result/{task}_{icl}_{model}_{imbalance_ratio}.csv".format(task=args.task, icl=args.test_retrieving, model=args.pretrained_model_name, imbalance_ratio=args.imbalance_ratio))
@@ -57,13 +60,13 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
     #task and prompt
-    parser.add_argument('--task', type=str, choices=['agnews','sst2','dbpedia'], default='sst2', help='task.')
+    parser.add_argument('--task', type=str, choices=['agnews','sst2','dbpedia','anli','nq'], default='sst2', help='task.')
     
     #retriever
     parser.add_argument('--test_retrieving', type=str, choices=['random', 'topk', 'dpp', 'zero'], default='zero', help='Choose demonstration selection method.')
     parser.add_argument('--noise_retrieving', type=bool, choices=[True, False], default=False, help='Choose noise retriever.')
     parser.add_argument('--dpp_candidate_num',  type=int, default=16, help='see DPP.')
-    parser.add_argument('--ice_num',  type=int, default=4)
+    parser.add_argument('--ice_num',  type=int, default=8)
 
     parser.add_argument('--tau',  type=int, choices=[25, 50, 75], default=50)
     parser.add_argument('--knn_num',  type=int, choices=[2, 4, 6, 8], default=4)

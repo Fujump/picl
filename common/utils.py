@@ -52,7 +52,7 @@ def setup_seed(seed):
 
 
 def get_inputes(task, new_ice_idx, new_ice_target, template, template_dict, training_dataset):
-    if (task == 'agnews' or task == 'sst2' or task == 'sst5' or task == 'dbpedia'):
+    if (task == 'agnews' or task == 'sst2' or task == 'sst5' or task == 'dbpedia' or  task == 'anli'):
         generated_ice_list = []
         for idx_list in range(len(new_ice_idx)):
 
@@ -91,14 +91,26 @@ def collote_fn(batch_samples, tokenizer=AutoTokenizer.from_pretrained("/mnt/shar
 
 
 def get_prompt_label(task):
-    if task == 'sst2':
-        template = '\n Positve or Negative New Review? \n Input: </text> \n Output:'
-        labels = ["Negative", "Positve"]
+    if task == 'anli':
+        template = '</E> \n premise and hypothesis is entailment, neutral or contradiction? \n Input: </text> \n Output:'
+        labels = ["entailment", "neutral", 'contradiction']
         template_dict = {
-                        1: " </E> \n Positve or Negative New Review? \n Input: </text> \n Output: Positive",
-                        0: " </E> \n Positve or Negative New Review? \n Input: </text> \n Output: Negative" 
+                        0: " </E> \n premise and hypothesis is entailment, neutral or contradiction? \n Input: </text> \n Output: entailment",
+                        1: " </E> \n premise and hypothesis is entailment, neutral or contradiction? \n Input: </text> \n Output: neutral", 
+                        2: " </E> \n premise and hypothesis is entailment, neutral or contradiction? \n Input: </text> \n Output: contradiction"
                     }
         
+    elif task == 'sst2':
+        template = '</E> \n Positve or Negative New Review? \n Input: </text> \n Output: </answer>'
+        labels = []
+        template_dict = {0:'</E> \n Positve or Negative New Review? Please output "Positve" or " Negative". \n Input: </text> \n Output: </answer>'}
+        # template = '\n Positve or Negative New Review? \n Input: </text> \n Output:'
+        # labels = ["Negative", "Positve"]
+        # template_dict = {
+        #                 1: " </E> \n Positve or Negative New Review? \n Input: </text> \n Output: Positive",
+        #                 0: " </E> \n Positve or Negative New Review? \n Input: </text> \n Output: Negative" 
+        #             }
+
     elif task == 'sst5':
         template = '\n Very Positve, Positve, Neutral, Negative or Very Negative Movie Review? \n Input: </text> \n Output:'
         labels = ["Very Negative","Negative", "Neutral", "Positve", "Very Positve"]
@@ -155,7 +167,7 @@ def extract_data(dataloader, task):
     texts = []
     labels = []
     ppls = []
-    if (task == 'sst2' or task == 'agnews' or task == 'sst5' or task == 'dbpedia'):
+    if (task == 'sst2' or task == 'agnews' or task == 'sst5' or task == 'dbpedia' or task == 'anli'):
         for text, target, index in tqdm (dataloader):
             texts.append(text[0])
             labels.append(int(target[0]))
@@ -173,7 +185,7 @@ def generate_label_prompt(idx, test_ds, ice, label, template):
     return prompt
 
 def get_input(task, ice_idx_list, template, template_dict, training_dataset):
-    if (task == 'sst2' or task == 'agnews' or task == 'sst5' or task == 'dbpedia'):
+    if (task == 'sst2' or task == 'agnews' or task == 'sst5' or task == 'dbpedia' or task == 'anli'):
         generated_ice_list = []
         for idx_list in ice_idx_list:
 
@@ -197,7 +209,7 @@ def delect_unavailable_word(text):
     preds = []
     
     for pred in tqdm(text):
-        preds.append(str.replace(str.replace(pred.split('Question', 1)[0], '</E>', ''),'\n','').strip())
+        preds.append(str.replace(str.replace(pred.split('Input', 1)[0], '</E>', ''),'\n','').strip())
     return preds
 
 from torch.utils.data import DataLoader

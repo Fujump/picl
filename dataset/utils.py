@@ -3,7 +3,7 @@ from .classification_dataset import ClassificationTasksDatasets
 
 def get_dataloader(task, type, imbalance_type, imbalance_ratio, seed):
 
-    if task == 'sst2' or task == 'agnews' or task == 'sst5' or task == 'dbpedia':
+    if task == 'sst2' or task == 'agnews' or task == 'sst5' or task == 'dbpedia' or task == 'anli':
         raw_dataset = ClassificationTasksDatasets(dataset_type=type, task=task, imbalance_type=imbalance_type, imbalance_ratio=imbalance_ratio, seed=seed)
 
     else:
