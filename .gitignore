@@ -50,8 +50,10 @@ Thumbs.db
 
 output/
 output_new/
+output_gen/
 log/
 log_new/
+log_gen/
 *.csv
 *.json
 *.out
