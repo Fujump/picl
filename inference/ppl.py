@@ -84,7 +84,10 @@ class PPLInferencer(BaseInferencer):
         return [sample['prediction'] for sample in output_handler.results_dict.values()]
 
     def __get_ppl(self, input_texts: List[str], mask_length=None):
-        self.tokenizer.pad_token = self.tokenizer.eos_token
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+            if self.tokenizer.pad_token is None:
+                self.tokenizer.add_special_tokens({'pad_token': "<|endoftext|>"})
         inputs = self.tokenizer(input_texts, padding=True, return_tensors='pt', truncation=True, max_length=1024)
         inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
         outputs = self.model(**inputs)

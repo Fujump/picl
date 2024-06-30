@@ -6,6 +6,7 @@ import pandas as pd
 import torch
 import argparse
 import evaluate
+# from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 from sklearn.metrics import accuracy_score
 
 from dataset.utils import get_dataloader
@@ -17,8 +18,18 @@ from common import get_prompt_label, extract_data, setup_seed, get_input, calcul
 
 def main(args):
     device = torch.device("cuda:0")
+    # tokenizer = get_tokenizer(args.pretrained_model_name)
+    # # 使用init_empty_weights初始化模型，防止参数被卸载到CPU
+    # with init_empty_weights():
+    #     model = get_model(args.pretrained_model_name)
+
+    # # 加载检查点并分派到GPU上，确保模型在加载时使用half precision
+    # model = load_checkpoint_and_dispatch(
+    #     model, "/mnt/sharedata/ssd/common/LLMs/Mixtral-8x22B-Instruct-v0.1", device_map="auto", dtype=torch.float16
+    # )
     model, tokenizer = get_model(args.pretrained_model_name), get_tokenizer(args.pretrained_model_name)
-    
+    model.half()
+
     accuracys=[]
     precisions=[]
     recalls=[]
@@ -100,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('--ice_imbalance_type', type=str, choices=['exp', "real"], default="exp", help='noisy type.')
 
     #model
-    parser.add_argument('--pretrained_model_name', '-m', choices=['Baichuan2-13B-Chat','ShieldLM-13B-baichuan2',"glm-4-9b-chat",'internlm2-20b','internlm2-7b','deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
+    parser.add_argument('--pretrained_model_name', '-m', choices=['ShieldLM-14B-qwen','ShieldLM-7B-internlm2','ShieldLM-6B-chatglm3','ShieldLM-13B-baichuan2','internlm2-chat-20b','internlm2-chat-7b','Yi-1.5-34B-Chat',"Qwen1.5-72B-Chat",'Baichuan2-13B-Chat',"glm-4-9b-chat",'internlm2-20b','internlm2-7b','deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
     
     #others
     parser.add_argument('--batch_size', type=int, default=2, help='Test batch size.')
