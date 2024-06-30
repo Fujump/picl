@@ -13,7 +13,7 @@ from dataset.utils import get_dataloader
 from model import get_model, get_tokenizer
 from algorithms import get_retriever
 from inference import get_inferencer
-from common import get_prompt_label, extract_data, setup_seed, get_input, calculate_precision_recall, calculate_precision_recall_neg
+from common import get_prompt_label, extract_data, setup_seed, get_input, calculate_precision_recall, calculate_precision_recall_neg, delect_unavailable_word
 
 
 def main(args):
@@ -56,8 +56,10 @@ def main(args):
 
 
         #####Inference#####
-        inferencer = get_inferencer('ppl', model_name=model, tokenizer_name = tokenizer, device = device, batch_size=args.batch_size)
+        inferencer = get_inferencer('gen', model_name=model, tokenizer_name = tokenizer, device = device, batch_size=args.batch_size)
         test_predictions = inferencer.inference(task=args.task, ice=ice,  candidate=test_dataset['text'], labels=list(range(len(label))), ice_template=template_dict)
+        
+        print(delect_unavailable_word(test_predictions))
 
         #####Evaluate#####
         labels=test_dataset['label'].tolist()
@@ -99,7 +101,7 @@ if __name__ == '__main__':
     parser.add_argument('--test_retrieving', type=str, choices=['random', 'topk', 'dpp', 'zero'], default='zero', help='Choose demonstration selection method.')
     parser.add_argument('--noise_retrieving', type=bool, choices=[True, False], default=False, help='Choose noise retriever.')
     parser.add_argument('--dpp_candidate_num',  type=int, default=16, help='see DPP.')
-    parser.add_argument('--ice_num',  type=int, default=4)
+    parser.add_argument('--ice_num',  type=int, default=8)
 
     parser.add_argument('--tau',  type=int, choices=[25, 50, 75], default=50)
     parser.add_argument('--knn_num',  type=int, choices=[2, 4, 6, 8], default=4)

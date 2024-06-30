@@ -1,9 +1,12 @@
 """Basic Inferencer"""
 
-
-from transformers import AutoTokenizer, AutoModelForCausalLM, PretrainedConfig, GPT2Tokenizer, AutoConfig
+import os
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, PretrainedConfig, GPT2Tokenizer, AutoConfig, \
+    T5ForConditionalGeneration
 from typing import List, Union, Optional, Any
 from accelerate import Accelerator
+from accelerate import init_empty_weights, infer_auto_device_map
 
 from common import PromptTemplate
 from common.api import *
@@ -49,7 +52,9 @@ class BaseInferencer:
             if self.api_name == 'opt-175b':
                 self.__init_tokenizer(self.tokenizer_name)
         
-        self.device = device
+        self.device = device 
+        # if self.model is not None:
+        #     self.model.to(self.device)
         self.model.eval()  
         self.max_model_token_num = max_model_token_num
         self.batch_size = batch_size
@@ -65,6 +70,40 @@ class BaseInferencer:
 
     def __init_model(self, model_name, model_config, model_parallel, device_map, no_split_module_classes):
         self.model = model_name
+        # if not isinstance(model_name, str):
+        #     self.model = model_name
+        #     self.model_name = ''  # set model name to null since we pass the loaded model already
+        #     return
+        # if not model_parallel:
+        #     if model_config is not None:
+        #         self.model = self.__get_hf_model_from_config(model_name, model_config)
+        #     else:
+        #         self.model = self.__get_hf_model_from_name(model_name)
+        # else:
+        #     if model_config is None:
+        #         model_config = AutoConfig.from_pretrained(model_name)
+        #     with init_empty_weights():
+        #         empty_model = AutoModelForCausalLM.from_config(model_config)
+
+        #     if device_map is None:
+        #         device_map = infer_auto_device_map(empty_model, no_split_module_classes=no_split_module_classes,
+        #                                            dtype="float16")
+
+        #     self.model = AutoModelForCausalLM.from_pretrained(model_name, device_map=device_map,
+        #                                                       offload_folder="offload", offload_state_dict=True,
+        #                                                       torch_dtype=torch.float16)
+
+    # def __get_hf_model_from_name(self, model_name):
+    #     if 't5' in model_name:
+    #         return T5ForConditionalGeneration.from_pretrained(model_name)
+    #     else:
+    #         return AutoModelForCausalLM.from_pretrained(model_name)
+
+    # def __get_hf_model_from_config(self, model_name, model_config):
+    #     if 't5' in model_name:
+    #         raise TypeError("T5 model has no 'from_config' method")
+    #     else:
+    #         return AutoModelForCausalLM.from_config(model_config)
 
     def __init_tokenizer(self, tokenizer_name):
         self.tokenizer = tokenizer_name

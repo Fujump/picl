@@ -4,37 +4,25 @@ from sklearn.model_selection import train_test_split
 
 
 class GenerationTasksDatasets:
-    def __init__(self, dataset_type, task, noise_type, noise_ratio, seed):
+    def __init__(self, dataset_type, task, imbalance_type, imbalance_ratio, seed):
         self.dataset_type = dataset_type
-        self.noise_type = noise_type
-        self.noise_ratio = noise_ratio
+        self.imbalance_type = imbalance_type
+        self.imbalance_ratio = imbalance_ratio
         self.task = task
         self.seed = seed
 
-        raw_train_dataset = pd.read_csv("sciq_train.csv", header=0)
-        raw_test_dataset = pd.read_csv("sciq_test", header=0)
+
+        raw_train_dataset = pd.read_csv("/data/home/hongfugao/train_mintaka.csv", header=0)
+        raw_test_dataset = pd.read_csv("/data/home/hongfugao/test_mintaka.csv", header=0)
 
         
         if self.dataset_type == 'train':
-            clean_ds, noise_ds = train_test_split(raw_train_dataset, test_size=noise_ratio, shuffle=True, random_state=self.seed)
-            if noise_type == 'relevant':
-                self.text_total = sum([clean_ds['text'].tolist(), noise_ds['text'].tolist()], [])
-                self.label_total = sum([clean_ds['correct'].tolist(), noise_ds['relevant'].tolist()], [])
+            self.text_total = raw_train_dataset['question']
+            self.label_total = raw_train_dataset['label']
 
-            elif noise_type == 'irrelevant':
-                self.text_total = sum([clean_ds['text'].tolist(), noise_ds['text'].tolist()], [])
-                self.label_total = sum([clean_ds['correct'].tolist(), noise_ds['irrelevant'].tolist()], [])
-
-            elif noise_type == 'real':
-                self.text_total = sum([clean_ds['text'].tolist(), noise_ds['text'].tolist()], [])
-                self.label_total = sum([clean_ds['correct'].tolist(), noise_ds['correct'].tolist()], [])
-
-            
-            else:
-                print("ERROR NOISE TYPE")
         
         else:
-            self.text_total = raw_test_dataset['text']
+            self.text_total = raw_test_dataset['question']
             self.label_total = raw_test_dataset['label']
 
         
