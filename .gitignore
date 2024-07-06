@@ -51,9 +51,15 @@ Thumbs.db
 output/
 output_new/
 output_gen/
+output_sub/
 log/
 log_new/
 log_gen/
+log_sub/
+dataset/*.npy
+dataset/*.csv
+dataset/*.ipynb
+tmp.ipynb
 *.csv
 *.json
 *.out

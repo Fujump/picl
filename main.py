@@ -35,7 +35,7 @@ def main(args):
     recalls=[]
     precisions_neg=[]
     recalls_neg=[]
-    for seed in [100]:
+    for seed in [100,200,300]:
         setup_seed(seed)
 
         #####get data#####
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     parser.add_argument('--ice_imbalance_type', type=str, choices=['exp', "real"], default="exp", help='noisy type.')
 
     #model
-    parser.add_argument('--pretrained_model_name', '-m', choices=['ShieldLM-14B-qwen','ShieldLM-7B-internlm2','ShieldLM-6B-chatglm3','ShieldLM-13B-baichuan2','internlm2-chat-20b','internlm2-chat-7b','Yi-1.5-34B-Chat',"Qwen1.5-72B-Chat",'Baichuan2-13B-Chat',"glm-4-9b-chat",'internlm2-20b','internlm2-7b','deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
+    parser.add_argument('--pretrained_model_name', '-m', choices=['Qwen1.5-14B-Chat-ft-zero-sub','Qwen1.5-14B-Chat-ft-zero','Qwen1.5-14B-Chat-ft-topk','Qwen1.5-32B-Chat','ShieldLM-14B-qwen','ShieldLM-7B-internlm2','ShieldLM-6B-chatglm3','ShieldLM-13B-baichuan2','internlm2-chat-20b','internlm2-chat-7b','Yi-1.5-34B-Chat',"Qwen1.5-72B-Chat",'Baichuan2-13B-Chat',"glm-4-9b-chat",'internlm2-20b','internlm2-7b','deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
     
     #others
     parser.add_argument('--batch_size', type=int, default=2, help='Test batch size.')

@@ -34,6 +34,7 @@ pretrained_model_dic = {
         "opt-66b":"/mnt/sharedata/ssd/common/LLMs/opt-66b",
         "Qwen2-7B":"/mnt/sharedata/ssd/common/LLMs/Qwen2-7B",
         "Qwen2-72B":"/mnt/sharedata/ssd/common/LLMs/Qwen2-72B",
+        "Qwen1.5-32B-Chat":"/mnt/sharedata/ssd/common/LLMs/Qwen1.5-32B-Chat",
         "Qwen1.5-72B-Chat":"/mnt/sharedata/ssd/common/LLMs/Qwen1.5-72B-Chat",
         "glm-4-9b-chat":"/mnt/sharedata/ssd/common/LLMs/glm-4-9b-chat",
         "YI-1.5-9B":"/mnt/sharedata/ssd/common/LLMs/Yi-1.5-9B",
@@ -51,6 +52,9 @@ pretrained_model_dic = {
         "ShieldLM-6B-chatglm3":"/mnt/sharedata/ssd/common/LLMs/ShieldLM-6B-chatglm3",
         "ShieldLM-7B-internlm2":"/mnt/sharedata/ssd/common/LLMs/ShieldLM-7B-internlm2",
         "ShieldLM-14B-qwen":"/mnt/sharedata/ssd/common/LLMs/ShieldLM-14B-qwen",
+        "Qwen1.5-14B-Chat-ft-topk":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-topk/checkpoint-609-merged",
+        "Qwen1.5-14B-Chat-ft-zero":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-zero/checkpoint-609-merged",
+        "Qwen1.5-14B-Chat-ft-zero-sub":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-zero-sub/checkpoint-609-merged",
         }
 
 

@@ -41,7 +41,7 @@ class BaseRetriever:
 
         self.noise_classifier_model = noisy_model
         self.noise_classifier_tokenizer = noisy_tokenizer
-        self.noise_classifier_model.eval()
+        # self.noise_classifier_model.eval()
         
         self.batch_size = 8
         self.test_text = self.test_ds['text'].tolist()
@@ -148,6 +148,9 @@ class BaseRetriever:
                 metadata = entry.pop("metadata")
                 raw_text = self.tokenizer.batch_decode(entry['input_ids'], skip_special_tokens=True, verbose=False)
                 res = self.model.encode(raw_text, show_progress_bar=False)
+            # print(len(res))
+            # # print(len(list(metadata)))
+            # print(list(metadata))
             res_list.extend([{"embed": r, "metadata": m} for r, m in zip(res, metadata)])
         return res_list
     

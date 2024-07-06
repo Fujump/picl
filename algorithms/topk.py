@@ -17,6 +17,7 @@ class TopkRetriever(BaseRetriever):
     def knn_search(self, ice_num, candidate_num, noise_retriever_type, knn_num, knn_q,ranking_score,ranking):
         rtr_idx_list = [[] for _ in range(len(self.text_forward))]
         logger.info("Retrieving data for test set...")
+        logger.info("on process...")
 
         for entry in tqdm.tqdm(self.text_forward):
             idx = entry['metadata']['id']
@@ -27,4 +28,5 @@ class TopkRetriever(BaseRetriever):
 
 
     def retrieve(self, ice_num, candidate_num, noise_retriever_type, knn_num, knn_q,ranking_score,ranking):
+        print("on process")
         return self.knn_search(ice_num, candidate_num, noise_retriever_type, knn_num, knn_q,ranking_score,ranking)

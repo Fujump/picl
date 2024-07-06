@@ -5,7 +5,7 @@ from .topk import TopkRetriever
 from .zero import ZeroRetriever
 
 
-def get_retriever(retriever_type, task, ice_dataloader, candidate_dataloader, noisy_model, noisy_tokenizer, device):
+def get_retriever(retriever_type, task, ice_dataloader, candidate_dataloader, noisy_model=None, noisy_tokenizer=None, device=None):
     if retriever_type == 'topk':
         print("topk")
         retriever = TopkRetriever(task, ice_dataloader, candidate_dataloader, noisy_model=noisy_model, noisy_tokenizer=noisy_tokenizer, device=device)
