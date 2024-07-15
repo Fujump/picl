@@ -47,6 +47,7 @@ pretrained_model_dic = {
         "opt-66b":"/mnt/sharedata/ssd/common/LLMs/opt-66b",
         "Qwen2-7B":"/mnt/sharedata/ssd/common/LLMs/Qwen2-7B",
         "Qwen2-72B":"/mnt/sharedata/ssd/common/LLMs/Qwen2-72B",
+        "Qwen1.5-32B-Chat":"/mnt/sharedata/ssd/common/LLMs/Qwen1.5-32B-Chat",
         "Qwen1.5-72B-Chat":"/mnt/sharedata/ssd/common/LLMs/Qwen1.5-72B-Chat",
         "glm-4-9b-chat":"/mnt/sharedata/ssd/common/LLMs/glm-4-9b-chat",
         "YI-1.5-9B":"/mnt/sharedata/ssd/common/LLMs/Yi-1.5-9B",
@@ -67,6 +68,8 @@ pretrained_model_dic = {
         "Qwen1.5-14B-Chat-ft-topk":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-topk/checkpoint-609-merged",
         "Qwen1.5-14B-Chat-ft-zero":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-zero/checkpoint-609-merged",
         "Qwen1.5-14B-Chat-ft-zero-sub":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-zero-sub/checkpoint-609-merged",
+        'llamaguard':"/mnt/sharedata/ssd/users/huq/model/LlamaGuard2/",
+        'Llama3-ChatQA-1.5-70B':"/mnt/sharedata/ssd/common/LLMs/Llama3-ChatQA-1.5-70B"
         
         }
 
@@ -124,8 +127,8 @@ def main(args):
             if len((test_dataset['text'][i]))>900:
                 continue
             indices.append(i)
-            # generator = outlines.generate.choice(model, ["违规", "不违规"])
-            generator = outlines.generate.choice(model, ['政治错误', '偏见歧视', '违法犯罪', '脏话侮辱', '道德伦理', '身体伤害', '财产隐私', '心理健康','淫秽色情','变体词', "不违规"])
+            generator = outlines.generate.choice(model, ["违规", "不违规"])
+            # generator = outlines.generate.choice(model, ['政治错误', '偏见歧视', '违法犯罪', '脏话侮辱', '道德伦理', '身体伤害', '财产隐私', '心理健康','淫秽色情','变体词', "不违规"])
             answer = generator(test_dataset['text'][i])
             pred=0 if answer=="不违规" else 1
             test_predictions.append(pred)
@@ -147,7 +150,7 @@ def main(args):
 
         dat = pd.DataFrame({"preds":test_predictions, "label":np.array(test_dataset['label'])[indices], "ice":np.array(ice)[indices], "text":np.array(test_dataset['text'])[indices]})
         # dat = pd.DataFrame({"preds":test_predictions, "label":test_dataset['label'][indices], "ice":ice[indices], "text":test_dataset['text'][indices]})
-        dat.to_csv('/data/home/huq/deepai/output_sub/{model}_{ranking}_{ice_num}_{knn_num}_{task}_{dpp_candidate_num}_{test_retrieving}_{noise_retrieving}_{tau}_{seed}.csv'.format(model=args.pretrained_model_name ,ranking=args.ranking, tau=args.tau, dpp_candidate_num=args.dpp_candidate_num, ice_num=args.ice_num, task=args.task, test_retrieving=args.test_retrieving,  noise_retrieving=args.noise_retrieving, seed=seed,knn_num=args.knn_num))
+        dat.to_csv('/data/home/huq/deepai/output_gen_total/{model}_{ranking}_{ice_num}_{knn_num}_{task}_{dpp_candidate_num}_{test_retrieving}_{noise_retrieving}_{tau}_{seed}.csv'.format(model=args.pretrained_model_name ,ranking=args.ranking, tau=args.tau, dpp_candidate_num=args.dpp_candidate_num, ice_num=args.ice_num, task=args.task, test_retrieving=args.test_retrieving,  noise_retrieving=args.noise_retrieving, seed=seed,knn_num=args.knn_num))
 
     # dat = pd.DataFrame({"acc":acc})
     # dat.to_csv("/data/home/hongfugao/result/{task}_{icl}_{model}_{imbalance_ratio}.csv".format(task=args.task, icl=args.test_retrieving, model=args.pretrained_model_name, imbalance_ratio=args.imbalance_ratio))
@@ -156,7 +159,7 @@ def main(args):
     print(f"accuracy:{accuracys}, precision:{precisions}, recall:{recalls}, precision_n:{precisions_neg}, recall_n:{recalls_neg}")
     # resul = pd.DataFrame({"em": em, "rouge":rouge})
     resul = pd.DataFrame({"accuracy":accuracys, "precision": precisions, "recall":recalls, "precision_n":precisions_neg, "recall_n":recalls_neg})
-    resul.to_csv('/data/home/huq/deepai/output_sub/result_{model}_{ranking}_{ice_num}_{knn_num}_{task}_{dpp_candidate_num}_{test_retrieving}_{noise_retrieving}_{tau}_{seed}.csv'.format(model=args.pretrained_model_name ,ranking=args.ranking, tau=args.tau, dpp_candidate_num=args.dpp_candidate_num, ice_num=args.ice_num, task=args.task, test_retrieving=args.test_retrieving,  noise_retrieving=args.noise_retrieving, seed=seed,knn_num=args.knn_num))
+    resul.to_csv('/data/home/huq/deepai/output_gen_total/result_{model}_{ranking}_{ice_num}_{knn_num}_{task}_{dpp_candidate_num}_{test_retrieving}_{noise_retrieving}_{tau}_{seed}.csv'.format(model=args.pretrained_model_name ,ranking=args.ranking, tau=args.tau, dpp_candidate_num=args.dpp_candidate_num, ice_num=args.ice_num, task=args.task, test_retrieving=args.test_retrieving,  noise_retrieving=args.noise_retrieving, seed=seed,knn_num=args.knn_num))
         
 
 
@@ -184,7 +187,7 @@ if __name__ == '__main__':
     parser.add_argument('--ice_imbalance_type', type=str, choices=['exp', "real"], default="exp", help='noisy type.')
 
     #model
-    parser.add_argument('--pretrained_model_name', '-m', choices=['Qwen1.5-14B-Chat-ft-zero-sub','Qwen1.5-14B-Chat-ft-zero','Qwen1.5-14B-Chat-ft-topk','ShieldLM-14B-qwen','ShieldLM-7B-internlm2','ShieldLM-6B-chatglm3','ShieldLM-13B-baichuan2','internlm2-chat-20b','internlm2-chat-7b','Yi-1.5-34B-Chat',"Qwen1.5-72B-Chat",'Baichuan2-13B-Chat',"glm-4-9b-chat",'internlm2-20b','internlm2-7b','deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
+    parser.add_argument('--pretrained_model_name', '-m', choices=['Llama3-ChatQA-1.5-70B','Qwen1.5-32B-Chat','llamaguard','Qwen1.5-14B-Chat-ft-zero-sub','Qwen1.5-14B-Chat-ft-zero','Qwen1.5-14B-Chat-ft-topk','ShieldLM-14B-qwen','ShieldLM-7B-internlm2','ShieldLM-6B-chatglm3','ShieldLM-13B-baichuan2','internlm2-chat-20b','internlm2-chat-7b','Yi-1.5-34B-Chat',"Qwen1.5-72B-Chat",'Baichuan2-13B-Chat',"glm-4-9b-chat",'internlm2-20b','internlm2-7b','deepseek-llm-67b-chat','deepseek-llm-7b-chat','Ziya2-13B-Chat','Yi-1.5-34B',"YI-1.5-9B","glm-4-9b-chat","Qwen2-72B","Qwen2-7B","opt-66b","opt-30b","opt-13b","opt-6.7b","GPT-J-6B","gemma-1.1-7b",'Mistral-22B','Mistral-7B','llama3','Yi-1.5-9B-Chat','internlm2-chat-7b','chatglm3','llama3-c','llama','baichuan2','qwen1.5','baichuan2_ft','qwen1.5_ft','baichuan2_warmup','qwen1.5_warmup','baichuan2_warmup_topk','qwen1.5_warmup_topk','tinyllama','qwen1.5-14b','qwen1.5-14b-ft'], type=str, default='llama', help='Choose pretrained model.')
     
     #others
     parser.add_argument('--batch_size', type=int, default=2, help='Test batch size.')

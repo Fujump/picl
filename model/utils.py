@@ -55,6 +55,7 @@ pretrained_model_dic = {
         "Qwen1.5-14B-Chat-ft-topk":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-topk/checkpoint-609-merged",
         "Qwen1.5-14B-Chat-ft-zero":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-zero/checkpoint-609-merged",
         "Qwen1.5-14B-Chat-ft-zero-sub":"/mnt/sharedata/ssd/users/huq/model/Qwen1.5-14B-Chat-ft-zero-sub/checkpoint-609-merged",
+        'llamaguard':"/mnt/sharedata/ssd/users/huq/model/LlamaGuard2/"
         }
 
 

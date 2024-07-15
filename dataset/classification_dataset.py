@@ -41,7 +41,7 @@ class ClassificationTasksDatasets:
         elif self.task == 'illegal':
             raw_dataset = pd.DataFrame(columns=["label_sub", "label_total", "text"])
             # raw_dataset = pd.read_json("dataset/all_data.json", orient='columns', lines=True)
-            raw_dataset = pd.read_json("dataset/all_data.json", orient='columns', lines=True)
+            raw_dataset = pd.read_json("dataset/all_data_total.json", orient='columns', lines=True)
         elif self.task == 'illegal_debug':
             raw_dataset = pd.DataFrame(columns=["text","label_total"])
             raw_dataset = pd.read_json("dataset/data_debug.json", orient='columns', lines=True)
@@ -51,16 +51,16 @@ class ClassificationTasksDatasets:
             print("ERROR DATALOADER")
         
         
-        # if self.task!='cold':
-        #     train_ds, test_ds = train_test_split(raw_dataset, test_size=self.train_test_split_ratio, shuffle=True, random_state=seed)
-        #     print(f"test size:{len(test_ds)}")
+        if self.task!='cold':
+            train_ds, test_ds = train_test_split(raw_dataset, test_size=self.train_test_split_ratio, shuffle=True, random_state=seed)
+            print(f"test size:{len(test_ds)}")
 
-        # 加载索引文件
-        sampled_indices = np.load('/data/home/huq/deepai/dataset/test_indices.npy')
-        # 根据索引从 raw_dataset 中提取 test_ds
-        test_ds = raw_dataset.loc[sampled_indices]
-        # 获取剩余的数据作为 train_ds
-        train_ds = raw_dataset.drop(sampled_indices)
+        # # 加载索引文件
+        # sex_indices = np.load(f'/data/home/huq/deepai/dataset/sex_{seed}.npy')
+        # # 根据索引从 raw_dataset 中提取 test_ds
+        # test_ds = raw_dataset.iloc[sex_indices]
+        # # 获取剩余的数据作为 train_ds
+        # train_ds = raw_dataset.drop(sex_indices)
 
         if self.dataset_type == 'train':
             if self.task == 'illegal' or self.task == 'illegal_debug':
